@@ -72,5 +72,10 @@ namespace game
 
             return x;
         }
+
+        public static void DisplaySummery(Player i_Player1, Player i_Player2)
+        {
+
+        }
     }
 }

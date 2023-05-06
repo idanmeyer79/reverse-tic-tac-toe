@@ -77,6 +77,7 @@ namespace game
                 IsGameOver = true;
                 switchPlayer();
                 Winner = CurrentPlayer;
+                Winner.Score++;
             }
             else if (checkForTie())
             {

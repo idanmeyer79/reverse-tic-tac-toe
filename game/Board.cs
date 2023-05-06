@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-
-namespace game
+﻿namespace game
 {
     internal class Board
     {

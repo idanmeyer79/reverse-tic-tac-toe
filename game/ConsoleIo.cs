@@ -13,7 +13,7 @@ namespace game
             return new Player(name, i_Symbol);
         }
 
-        public static string DisplayBoard(Board i_Board)
+        public static void DisplayBoard(Board i_Board)
         {
             StringBuilder sb = new StringBuilder();
             for (int j = 0; j < i_Board.BoardSize; j++)
@@ -41,7 +41,7 @@ namespace game
                     sb.AppendLine();
                 }
             }
-            return sb.ToString();
+            Console.WriteLine(sb.ToString());
         }
 
         public static int GetBoardSizeFromPlayer()

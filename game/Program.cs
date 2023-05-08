@@ -36,7 +36,7 @@ namespace game
                 while(game.IsRoundOver == false)
                 {
                     Ex02.ConsoleUtils.Screen.Clear();
-                    Console.WriteLine(ConsoleIo.DisplayBoard(game.Board));
+                    ConsoleIo.DisplayBoard(game.Board);
 
                     Player currentPlayer = game.CurrentPlayer;
 
@@ -71,7 +71,7 @@ namespace game
                 }
                 // Display the final board and winner (if any)
                 Ex02.ConsoleUtils.Screen.Clear();
-                Console.WriteLine(ConsoleIo.DisplayBoard(game.Board));
+                ConsoleIo.DisplayBoard(game.Board);
                 ConsoleIo.DisplaySummery(game);
 
                 if(ConsoleIo.AskForUserToPlayNextRound() == false)

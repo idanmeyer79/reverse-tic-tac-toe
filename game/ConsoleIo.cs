@@ -5,6 +5,14 @@ namespace game
 {
     internal class ConsoleIo
     {
+        public static Player GetPlayerDetailsFromUser(char i_Symbol)
+        {
+            Console.Write("Enter player name: ");
+            string name = Console.ReadLine()?.Trim();
+
+            return new Player(name, i_Symbol);
+        }
+
         public static string DisplayBoard(Board i_Board)
         {
             StringBuilder sb = new StringBuilder();
@@ -73,9 +81,59 @@ namespace game
             return x;
         }
 
-        public static void DisplaySummery(Player i_Player1, Player i_Player2)
+        public static void DisplaySummery(Game i_Game)
         {
+            if (i_Game.Winner == null)
+            {
+                Console.WriteLine("It's a tie!");
+            }
+            else
+            {
+                Console.WriteLine($"Congratulations, {i_Game.Winner.Name} ({i_Game.Winner.Symbol})! You won!");
+            }
 
+            Console.WriteLine($@"Score summery:
+{i_Game.Player1.Name} has {i_Game.Player1.Score} points.
+{i_Game.Player2.Name} has {i_Game.Player2.Score} points");
         }
+
+        public static bool AskForUserToPlayNextRound()
+        {
+            bool playAgain = true;
+            while (playAgain)
+            {
+                Console.WriteLine("Press 'N' to play again or 'Q' to quit the game");
+                ConsoleKeyInfo key = Console.ReadKey();
+                char answer = char.ToUpper(key.KeyChar);
+                if (answer == 'N')
+                {
+                    break;
+                }
+                else if (answer == 'Q')
+                {
+                    playAgain = false;
+                }
+                else
+                {
+                    Console.WriteLine("\nInvalid input. Please press 'N' to play again or 'Q' to quit the game");
+                }
+            }
+            return playAgain;
+        }
+
+        public static int GetNumOfPlayers()
+        {
+            do
+            {
+                Console.Write("Enter number of players (1 or 2): ");
+                string input = Console.ReadLine()?.Trim();
+                if (int.TryParse(input, out int numPlayers) && (numPlayers == 1 || numPlayers == 2))
+                {
+                    return numPlayers;
+                }
+                Console.WriteLine("Invalid input. Please enter 1 or 2.");
+            } while (true);
+        }
+
     }
 }

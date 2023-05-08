@@ -10,6 +10,7 @@ namespace game
         public Player Winner { get; set; }
         public Board Board { get; set; }
         public bool IsGameOver { get; set; }
+        public bool IsRoundOver { get; set; }
 
         // Ctor
         public Game(Player i_Player1, Player i_Player2, int i_BoardSize)
@@ -19,6 +20,7 @@ namespace game
             CurrentPlayer = new Random().Next(2) == 0 ? i_Player1 : i_Player2; // randomly choose first player
             Board = new Board(i_BoardSize);
             IsGameOver = false;
+            IsRoundOver = false;
             Winner = null;
         }
 
@@ -35,7 +37,7 @@ namespace game
             Board.SetCellSymbol(i_X, i_Y, CurrentPlayer.Symbol);
 
             CheckForWinner();
-            if (!IsGameOver)
+            if (!IsRoundOver)
             {
                 switchPlayer();
                 if (CurrentPlayer.IsComputer)
@@ -74,14 +76,14 @@ namespace game
         {
             if (checkRowsForWinner() || checkColumnsForWinner() || checkDiagonalsForWinner())
             {
-                IsGameOver = true;
+                IsRoundOver = true;
                 switchPlayer();
                 Winner = CurrentPlayer;
                 Winner.Score++;
             }
             else if (checkForTie())
             {
-                IsGameOver = true;
+                IsRoundOver = true;
                 Winner = null;
             }
         }
@@ -156,7 +158,13 @@ namespace game
             return Board.IsBoardFull();
         }
 
-
+        public void ResetGame()
+        {
+            CurrentPlayer = new Random().Next(2) == 0 ? Player1 : Player2; // randomly choose first player
+            Board = new Board(Board.BoardSize);
+            IsRoundOver = false;
+            Winner = null;
+        }
     }
 
 

@@ -36,7 +36,7 @@
 
             foreach(Cell cell in Cells)
             {
-                if(cell.Symbol == ' ')
+                if(cell.IsCellEmpty())
                 {
                     isEmpty = false;
                 }

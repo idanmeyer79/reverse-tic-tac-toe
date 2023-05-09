@@ -2,7 +2,7 @@
 {
     class Cell
     {
-        // Data Members
+        // Data Member
         public char Symbol { get; set; }
         
 
@@ -10,6 +10,11 @@
         public Cell()
         {
             Symbol = ' ';
+        }
+
+        public bool IsCellEmpty()
+        {
+            return Symbol == ' ';
         }
     }
 

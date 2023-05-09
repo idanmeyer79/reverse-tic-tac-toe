@@ -9,6 +9,7 @@ namespace game
         {
             Console.Write("Enter player name: ");
             string name = Console.ReadLine()?.Trim();
+            CheckInputForQ(name);
 
             return new Player(name, i_Symbol);
         }
@@ -52,7 +53,9 @@ namespace game
             do
             {
                 Console.Write("Enter the size of the board (3-9): ");
-                if(!int.TryParse(Console.ReadLine(), out size) || size < 3 || size > 9)
+                string input = Console.ReadLine();
+                CheckInputForQ(input);
+                if (!int.TryParse(input, out size) || size < 3 || size > 9)
                 {
                     Console.Write("invalid input! try again\n");
                     continue;
@@ -64,22 +67,42 @@ namespace game
             return size;
         }
 
-        public static int GetMoveFromPlayer(int i_BoardSize)
+        public static void GetMoveFromPlayer(Board i_Board, out int o_row, out int o_col)
         {
+            o_row = -1;
+            o_col = -1;
             bool isValidInput = false;
-            int x;
             do
             {
-                if (!int.TryParse(Console.ReadLine(), out x) || x < 0 || x > i_BoardSize)
+                Console.Write($"Enter the row number of your move (1-{i_Board.BoardSize}): ");
+                string input = Console.ReadLine().Trim();
+                CheckInputForQ(input);
+                if (!int.TryParse(input, out o_row) || o_row < 1 || o_row > i_Board.BoardSize)
                 {
-                    Console.Write("invalid input! try again\n");
+                    Console.Write("Invalid input! Please enter a valid row number.\n");
                     continue;
                 }
-                isValidInput = true;
-            } while (isValidInput == false);
 
-            return x;
+                Console.Write($"Enter the column number of your move (1-{i_Board.BoardSize}): ");
+                input = Console.ReadLine().Trim();
+                CheckInputForQ(input);
+                if (!int.TryParse(input, out o_col) || o_col < 1 || o_col > i_Board.BoardSize)
+                {
+                    Console.Write("Invalid input! Please enter a valid column number.\n");
+                    continue;
+                }
+
+                if (i_Board.GetCellSymbol(o_row - 1, o_col - 1) != ' ')
+                {
+                    Console.Write("Cell is already occupied! Please choose an empty cell.\n");
+                    continue;
+                }
+
+                isValidInput = true;
+            } while (!isValidInput);
         }
+
+
 
         public static void DisplaySummery(Game i_Game)
         {
@@ -99,26 +122,10 @@ namespace game
 
         public static bool AskForUserToPlayNextRound()
         {
-            bool playAgain = true;
-            while (playAgain)
-            {
-                Console.WriteLine("Press 'N' to play again or 'Q' to quit the game");
-                ConsoleKeyInfo key = Console.ReadKey();
-                char answer = char.ToUpper(key.KeyChar);
-                if (answer == 'N')
-                {
-                    break;
-                }
-                else if (answer == 'Q')
-                {
-                    playAgain = false;
-                }
-                else
-                {
-                    Console.WriteLine("\nInvalid input. Please press 'N' to play again or 'Q' to quit the game");
-                }
-            }
-            return playAgain;
+            Console.WriteLine("Press any key to play again or 'Q' to quit the game");
+            string input = Console.ReadLine();
+            CheckInputForQ(input);
+            return true;
         }
 
         public static int GetNumOfPlayers()
@@ -127,12 +134,21 @@ namespace game
             {
                 Console.Write("Enter number of players (1 or 2): ");
                 string input = Console.ReadLine()?.Trim();
+                CheckInputForQ(input);
                 if (int.TryParse(input, out int numPlayers) && (numPlayers == 1 || numPlayers == 2))
                 {
                     return numPlayers;
                 }
                 Console.WriteLine("Invalid input. Please enter 1 or 2.");
             } while (true);
+        }
+
+        public static void CheckInputForQ(string i_Input)
+        {
+            if (i_Input == "Q")
+            {
+                Environment.Exit(0);
+            }
         }
 
     }

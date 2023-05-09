@@ -2,8 +2,9 @@
 {
     internal class Player
     {
-        public string Name { get; set; }
-        public char Symbol { get; set; }
+        private string m_name;
+
+        private char m_Symbol;
         public bool IsComputer { get; set; }
         public int Score { get; set; }
 
@@ -14,6 +15,10 @@
             IsComputer = false;
             Score = 0;
         }
+
+        public string Name { get; set; }
+
+        public char Symbol {get; set; }
     }
 
 }

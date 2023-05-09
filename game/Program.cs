@@ -45,11 +45,8 @@ namespace game
                         // Human player's turn
 
                         Console.WriteLine($"It's your turn, {currentPlayer.Name} ({currentPlayer.Symbol})");
-
-                        Console.Write($"Enter the row number of your move (1-{boardSize}): ");
-                        int row = ConsoleIo.GetMoveFromPlayer(boardSize);
-                        Console.Write($"Enter the col number of your move (1-{boardSize}): ");
-                        int col = ConsoleIo.GetMoveFromPlayer(boardSize);
+                        int row, col;
+                        ConsoleIo.GetMoveFromPlayer(game.Board, out row, out col);
 
                         try
                         {

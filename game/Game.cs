@@ -26,14 +26,6 @@ namespace game
 
         public void PlayTurn(int i_X, int i_Y)
         {
-
-            if (Board.GetCellSymbol(i_X, i_Y) != ' ')
-            {
-                Console.WriteLine("That square is already occupied. press any key to try again");
-                Console.ReadKey();
-                return;
-            }
-
             Board.SetCellSymbol(i_X, i_Y, CurrentPlayer.Symbol);
 
             CheckForWinner();
@@ -93,16 +85,16 @@ namespace game
             bool isWinner = false;
             for (int i = 0; i < Board.BoardSize; i++)
             {
-                bool isWinningRow = true;
+                bool isLosingRow = true;
                 for (int j = 0; j < Board.BoardSize; j++)
                 {
                     if (Board.GetCellSymbol(i, j) != CurrentPlayer.Symbol)
                     {
-                        isWinningRow = false;
+                        isLosingRow = false;
                         break;
                     }
                 }
-                if (isWinningRow)
+                if (isLosingRow)
                 {
                     isWinner = true;
                     break;
@@ -116,16 +108,16 @@ namespace game
             bool isWinner = false;
             for (int j = 0; j < Board.BoardSize; j++)
             {
-                bool isWinningColumn = true;
+                bool isLosingColumn = true;
                 for (int i = 0; i < Board.BoardSize; i++)
                 {
                     if (Board.GetCellSymbol(i, j) != CurrentPlayer.Symbol)
                     {
-                        isWinningColumn = false;
+                        isLosingColumn = false;
                         break;
                     }
                 }
-                if (isWinningColumn)
+                if (isLosingColumn)
                 {
                     isWinner = true;
                     break;
@@ -137,20 +129,20 @@ namespace game
 
         private bool checkDiagonalsForWinner()
         {
-            bool isWinningDiagonal1 = true;
-            bool isWinningDiagonal2 = true;
+            bool isLosingDiagonal1 = true;
+            bool isLosingDiagonal2 = true;
             for (int i = 0, j = 0; i < Board.BoardSize; i++, j++)
             {
                 if (Board.GetCellSymbol(i, j) != CurrentPlayer.Symbol)
                 {
-                    isWinningDiagonal1 = false;
+                    isLosingDiagonal1 = false;
                 }
                 if (Board.GetCellSymbol(i, Board.BoardSize - 1 - j) != CurrentPlayer.Symbol)
                 {
-                    isWinningDiagonal2 = false;
+                    isLosingDiagonal2 = false;
                 }
             }
-            return isWinningDiagonal1 || isWinningDiagonal2;
+            return isLosingDiagonal1 || isLosingDiagonal2;
         }
 
         private bool checkForTie()

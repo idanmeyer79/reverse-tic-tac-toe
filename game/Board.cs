@@ -32,15 +32,17 @@
 
         public bool IsBoardFull()
         {
+            bool isEmpty = true;
+
             foreach(Cell cell in Cells)
             {
                 if(cell.Symbol == ' ')
                 {
-                    return false;
+                    isEmpty = false;
                 }
             }
 
-            return true;
+            return isEmpty;
         }
     }
 }

@@ -155,7 +155,10 @@ namespace game
             CurrentPlayer = new Random().Next(2) == 0 ? Player1 : Player2; // randomly choose first player
             Board = new Board(Board.BoardSize);
             IsRoundOver = false;
+            IsGameOver = false;
             Winner = null;
+            Player1.Forfeited = false;
+            Player2.Forfeited = false;
         }
     }
 

@@ -9,7 +9,6 @@ namespace game
         {
             Console.Write("Enter player name: ");
             string name = Console.ReadLine()?.Trim();
-            CheckInputForQ(name);
 
             return new Player(name, i_Symbol);
         }
@@ -54,7 +53,6 @@ namespace game
             {
                 Console.Write("Enter the size of the board (3-9): ");
                 string input = Console.ReadLine();
-                CheckInputForQ(input);
                 if (!int.TryParse(input, out size) || size < 3 || size > 9)
                 {
                     Console.Write("invalid input! try again\n");
@@ -67,32 +65,44 @@ namespace game
             return size;
         }
 
-        public static void GetMoveFromPlayer(Board i_Board, out int o_row, out int o_col)
+        public static void GetMoveFromPlayer(Game i_Game, out int o_row, out int o_col)
         {
             o_row = -1;
             o_col = -1;
             bool isValidInput = false;
             do
             {
-                Console.Write($"Enter the row number of your move (1-{i_Board.BoardSize}): ");
+                Console.Write($"Enter the row number of your move (1-{i_Game.Board.BoardSize}): ");
                 string input = Console.ReadLine().Trim();
-                CheckInputForQ(input);
-                if (!int.TryParse(input, out o_row) || o_row < 1 || o_row > i_Board.BoardSize)
+                if(CheckInputForQ(input))
+                {
+                    i_Game.IsRoundOver = true;
+                    i_Game.CurrentPlayer.Forfeited = true;
+                    break;
+                }
+
+                if (!int.TryParse(input, out o_row) || o_row < 1 || o_row > i_Game.Board.BoardSize)
                 {
                     Console.Write("Invalid input! Please enter a valid row number.\n");
                     continue;
                 }
 
-                Console.Write($"Enter the column number of your move (1-{i_Board.BoardSize}): ");
+                Console.Write($"Enter the column number of your move (1-{i_Game.Board.BoardSize}): ");
                 input = Console.ReadLine().Trim();
-                CheckInputForQ(input);
-                if (!int.TryParse(input, out o_col) || o_col < 1 || o_col > i_Board.BoardSize)
+                if (CheckInputForQ(input))
+                {
+                    i_Game.IsRoundOver = true;
+                    i_Game.CurrentPlayer.Forfeited = true;
+                    break;
+                }
+
+                if (!int.TryParse(input, out o_col) || o_col < 1 || o_col > i_Game.Board.BoardSize)
                 {
                     Console.Write("Invalid input! Please enter a valid column number.\n");
                     continue;
                 }
 
-                if (i_Board.GetCellSymbol(o_row - 1, o_col - 1) != ' ')
+                if (i_Game.Board.GetCellSymbol(o_row - 1, o_col - 1) != ' ')
                 {
                     Console.Write("Cell is already occupied! Please choose an empty cell.\n");
                     continue;
@@ -106,7 +116,17 @@ namespace game
 
         public static void DisplaySummery(Game i_Game)
         {
-            if (i_Game.Winner == null)
+            if(i_Game.Player1.Forfeited)
+            {
+                Console.WriteLine($"{i_Game.Player1.Name} Forfeits!");
+                i_Game.Player2.Score++;
+            }
+            else if(i_Game.Player2.Forfeited)
+            {
+                Console.WriteLine($"{i_Game.Player2.Name} Forfeits!");
+                i_Game.Player1.Score++;
+            }
+            else if (i_Game.Winner == null)
             {
                 Console.WriteLine("It's a tie!");
             }
@@ -122,10 +142,15 @@ namespace game
 
         public static bool AskForUserToPlayNextRound()
         {
+            bool result = true;
             Console.WriteLine("Press any key to play again or 'Q' to quit the game");
             string input = Console.ReadLine();
-            CheckInputForQ(input);
-            return true;
+            if(CheckInputForQ(input))
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         public static int GetNumOfPlayers()
@@ -134,7 +159,6 @@ namespace game
             {
                 Console.Write("Enter number of players (1 or 2): ");
                 string input = Console.ReadLine()?.Trim();
-                CheckInputForQ(input);
                 if (int.TryParse(input, out int numPlayers) && (numPlayers == 1 || numPlayers == 2))
                 {
                     return numPlayers;
@@ -143,12 +167,9 @@ namespace game
             } while (true);
         }
 
-        public static void CheckInputForQ(string i_Input)
+        public static bool CheckInputForQ(string i_Input)
         {
-            if (i_Input == "Q")
-            {
-                Environment.Exit(0);
-            }
+            return i_Input == "Q";
         }
 
     }

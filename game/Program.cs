@@ -43,21 +43,16 @@ namespace game
                     if (currentPlayer.IsComputer == false)
                     {
                         // Human player's turn
-
+                        
                         Console.WriteLine($"It's your turn, {currentPlayer.Name} ({currentPlayer.Symbol})");
                         int row, col;
-                        ConsoleIo.GetMoveFromPlayer(game.Board, out row, out col);
-
-                        try
+                        ConsoleIo.GetMoveFromPlayer(game, out row, out col);
+                        if(game.IsRoundOver)
                         {
-                            game.PlayTurn(row - 1, col - 1);
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            Console.WriteLine("That cell is already occupied. press any key to try again\n");
-                            Console.ReadKey();
+                            break;
                         }
 
+                        game.PlayTurn(row - 1, col - 1);
                     }
                     else
                     {
@@ -74,6 +69,7 @@ namespace game
                 if(ConsoleIo.AskForUserToPlayNextRound() == false)
                 {
                     game.IsGameOver = true;
+                    break;
                 }
 
                 game.ResetGame();

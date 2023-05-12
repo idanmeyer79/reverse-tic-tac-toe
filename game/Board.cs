@@ -2,10 +2,14 @@
 {
     internal class Board
     {
+        public const int MinSizeOfBoard = 3;
+        public const int MaxSizeOfBoard = 9;
+        public const int MinValOfDimension = 1;
         public Cell[,] Cells { get; set; }
 
         public int BoardSize { get; set; }
 
+        // ctor
         public Board(int i_BoardSize)
         {
             BoardSize = i_BoardSize;

@@ -4,27 +4,121 @@ namespace game
 {
     internal class Game
     {
+        public const int Quit = -1;
+        public const int FirstRound = 0;
+        public const char Empty = ' ';
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public Player CurrentPlayer { get; set;}
         public Player Winner { get; set; }
         public Board Board { get; set; }
-        public bool IsGameOver { get; set; }
+        public int NumOfRounds { get; set; }
         public bool IsRoundOver { get; set; }
 
         // Ctor
-        public Game(Player i_Player1, Player i_Player2, int i_BoardSize)
+        public Game()
         {
-            Player1 = i_Player1;
-            Player2 = i_Player2;
-            CurrentPlayer = new Random().Next(2) == 0 ? i_Player1 : i_Player2; // randomly choose first player
-            Board = new Board(i_BoardSize);
-            IsGameOver = false;
-            IsRoundOver = false;
-            Winner = null;
+            int numOfPlayers = ConsoleIO.WelcomeUserAndGetNumOfPlayers(this);
+            // Create the players
+            Player1 = ConsoleIO.GetPlayerDetailsFromUser('X');
+
+            if (numOfPlayers == 1)
+            {
+                Player2 = new Player("Computer", 'O')
+                {
+                    IsComputer = true
+                };
+            }
+            else
+            {
+                Player2 = ConsoleIO.GetPlayerDetailsFromUser('O');
+            }
+
+            CurrentPlayer = (NumOfRounds) % 2 == 0 ? Player1 : Player2;
+
+            int boardSize = ConsoleIO.GetBoardSizeFromPlayer();
+
+            Board = new Board(boardSize);
+
         }
 
-        public void PlayTurn(int i_X, int i_Y)
+        public void RunGame()
+        {
+            do
+            {
+                if(NumOfRounds++ != FirstRound)
+                {
+                    SetGameForNewRound();
+                }
+                while(!IsRoundOver)
+                {
+                    Ex02.ConsoleUtils.Screen.Clear();
+                    ConsoleIO.DisplayBoard(Board);
+                    PlayTurn();
+                }
+                DisplayTheFinalBoardAndSummary();
+            }
+            while (ConsoleIO.DoesPlayerWantToPlayAnotherRound());
+        }
+
+        public void PlayTurn()
+        {
+            ConsoleIO.DisplayWhoseTurn(CurrentPlayer.Name, CurrentPlayer.Symbol);
+            if (CurrentPlayer.IsComputer)
+            {
+                PlayComputerTurn();
+            }
+            else // Human player's turn
+            {
+                ApplyHumanPlayerTurn();
+            }
+        }
+
+        public void ApplyHumanPlayerTurn()
+        {
+            bool isMoveApplied = false;
+            do
+            {
+                ConsoleIO.GetMoveFromPlayer(Board.BoardSize, out int row, out int col);
+                if (row == Quit || col == Quit)
+                {
+                    IsRoundOver = true;
+                    CurrentPlayer.Forfeited = true;
+                    UpdatePointsAfterPlayerForfeits();
+                }
+                else if (Board.GetCellSymbol(row - 1, col - 1) != Empty)
+                {
+                    ConsoleIO.DisplayCellIsOccupiedMsg();
+                }
+                else
+                {
+                    ApplyMove(row - 1, col - 1);
+                    isMoveApplied = true;
+                }
+            }
+            while (!isMoveApplied && !IsRoundOver);
+        }
+
+        public void UpdatePointsAfterPlayerForfeits()
+        {
+            if (Player1 == CurrentPlayer)
+            {
+                Player2.Score++;
+            }
+            else
+            {
+                Player1.Score++;
+            }
+        }
+
+        public void DisplayTheFinalBoardAndSummary()
+        {
+            Ex02.ConsoleUtils.Screen.Clear();
+            ConsoleIO.DisplayBoard(Board);
+            ConsoleIO.DisplaySummary(this);
+        }
+
+        public void ApplyMove(int i_X, int i_Y)
         {
             Board.SetCellSymbol(i_X, i_Y, CurrentPlayer.Symbol);
 
@@ -52,7 +146,7 @@ namespace game
                 // Check if the cell is free
                 if (Board.GetCellSymbol(row, col) == ' ')
                 {
-                    PlayTurn(row, col);
+                    ApplyMove(row, col);
                     return;
                 }
             }
@@ -150,15 +244,13 @@ namespace game
             return Board.IsBoardFull();
         }
 
-        public void ResetGame()
+        public void SetGameForNewRound()
         {
-            CurrentPlayer = new Random().Next(2) == 0 ? Player1 : Player2; // randomly choose first player
+            CurrentPlayer.Forfeited = false;
+            CurrentPlayer = (NumOfRounds) % 2 == 0 ? Player1 : Player2;
             Board = new Board(Board.BoardSize);
             IsRoundOver = false;
-            IsGameOver = false;
             Winner = null;
-            Player1.Forfeited = false;
-            Player2.Forfeited = false;
         }
     }
 

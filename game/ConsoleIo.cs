@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Text;
 
+
 namespace game
 {
-    internal class ConsoleIo
+    internal class ConsoleIO
     {
+        public static int WelcomeUserAndGetNumOfPlayers(Game game)
+        {
+            Console.WriteLine("Welcome to Reverse Tic Tac Toe!");
+
+            return GetNumOfPlayers();
+        }
         public static Player GetPlayerDetailsFromUser(char i_Symbol)
         {
             Console.Write("Enter player name: ");
@@ -13,6 +20,10 @@ namespace game
             return new Player(name, i_Symbol);
         }
 
+        public static void DisplayWhoseTurn(string i_NameOfCurrentPlayer, char i_Symbol)
+        {
+            Console.WriteLine($"It's {i_NameOfCurrentPlayer}'s turn ({i_Symbol})");
+        }
         public static void DisplayBoard(Board i_Board)
         {
             StringBuilder sb = new StringBuilder();
@@ -44,6 +55,10 @@ namespace game
             Console.WriteLine(sb.ToString());
         }
 
+        public static void DisplayCellIsOccupiedMsg()
+        {
+            Console.Write("Cell is already occupied! Please choose an empty cell.\n");
+        }
         public static int GetBoardSizeFromPlayer()
         {
             // Prompt the user to choose the board size
@@ -51,9 +66,9 @@ namespace game
             int size;
             do
             {
-                Console.Write("Enter the size of the board (3-9): ");
+                Console.Write($"Enter the size of the board ({Board.MinSizeOfBoard}-{Board.MaxSizeOfBoard}): ");
                 string input = Console.ReadLine();
-                if (!int.TryParse(input, out size) || size < 3 || size > 9)
+                if (!int.TryParse(input, out size) || size < Board.MinSizeOfBoard || size > Board.MaxSizeOfBoard)
                 {
                     Console.Write("invalid input! try again\n");
                     continue;
@@ -65,66 +80,54 @@ namespace game
             return size;
         }
 
-        public static void GetMoveFromPlayer(Game i_Game, out int o_row, out int o_col)
+        public static void GetMoveFromPlayer(int i_BoardSize, out int o_row, out int o_col)
         {
-            o_row = -1;
-            o_col = -1;
+            o_row = GetFromUserBoardValueOfDimension(i_BoardSize, "row");
+            if (o_row != Game.Quit)
+            {
+                o_col = GetFromUserBoardValueOfDimension(i_BoardSize, "column");
+            }
+            else
+            {
+                o_col = Game.Quit;
+            }
+        }
+
+        public static int GetFromUserBoardValueOfDimension(int i_BoardSize, string dimension)
+        {
+            int valueOfDimension;
             bool isValidInput = false;
             do
             {
-                Console.Write($"Enter the row number of your move (1-{i_Game.Board.BoardSize}): ");
+                Console.Write($"Enter the {dimension} number of your move (1-{i_BoardSize}): ");
                 string input = Console.ReadLine().Trim();
-                if(CheckInputForQ(input))
+                if (CheckInputForQuittingTheGame(input))
                 {
-                    i_Game.IsRoundOver = true;
-                    i_Game.CurrentPlayer.Forfeited = true;
-                    break;
+                    valueOfDimension = Game.Quit;
+                    isValidInput = true;
                 }
-
-                if (!int.TryParse(input, out o_row) || o_row < 1 || o_row > i_Game.Board.BoardSize)
+                else if (!int.TryParse(input, out valueOfDimension) || valueOfDimension < Board.MinValOfDimension || valueOfDimension > i_BoardSize)
                 {
-                    Console.Write("Invalid input! Please enter a valid row number.\n");
-                    continue;
+                    Console.Write($"Invalid input! Please enter a valid {dimension} number.\n");
                 }
-
-                Console.Write($"Enter the column number of your move (1-{i_Game.Board.BoardSize}): ");
-                input = Console.ReadLine().Trim();
-                if (CheckInputForQ(input))
+                else
                 {
-                    i_Game.IsRoundOver = true;
-                    i_Game.CurrentPlayer.Forfeited = true;
-                    break;
+                    isValidInput = true;
                 }
-
-                if (!int.TryParse(input, out o_col) || o_col < 1 || o_col > i_Game.Board.BoardSize)
-                {
-                    Console.Write("Invalid input! Please enter a valid column number.\n");
-                    continue;
-                }
-
-                if (i_Game.Board.GetCellSymbol(o_row - 1, o_col - 1) != ' ')
-                {
-                    Console.Write("Cell is already occupied! Please choose an empty cell.\n");
-                    continue;
-                }
-
-                isValidInput = true;
             } while (!isValidInput);
+
+            return valueOfDimension;
         }
 
-
-
-        public static void DisplaySummery(Game i_Game)
+        public static void DisplaySummary(Game i_Game)
         {
             if(i_Game.Player1.Forfeited)
             {
-                Console.WriteLine($"{i_Game.Player1.Name} Forfeits!");
-                i_Game.Player2.Score++;
+                Console.WriteLine($"{i_Game.Player1.Name} forfeits!");
             }
             else if(i_Game.Player2.Forfeited)
             {
-                Console.WriteLine($"{i_Game.Player2.Name} Forfeits!");
-                i_Game.Player1.Score++;
+                Console.WriteLine($"{i_Game.Player2.Name} forfeits!");
             }
             else if (i_Game.Winner == null)
             {
@@ -132,20 +135,21 @@ namespace game
             }
             else
             {
-                Console.WriteLine($"Congratulations, {i_Game.Winner.Name} ({i_Game.Winner.Symbol})! You won!");
+                Console.WriteLine($"{i_Game.Winner.Name} ({i_Game.Winner.Symbol}) won!");
             }
 
-            Console.WriteLine($@"Score summery:
+            Console.WriteLine($@"Score summary:
 {i_Game.Player1.Name} has {i_Game.Player1.Score} points.
-{i_Game.Player2.Name} has {i_Game.Player2.Score} points");
+{i_Game.Player2.Name} has {i_Game.Player2.Score} points.");
         }
 
-        public static bool AskForUserToPlayNextRound()
+        public static bool DoesPlayerWantToPlayAnotherRound()
         {
             bool result = true;
+
             Console.WriteLine("Press any key to play again or 'Q' to quit the game");
             string input = Console.ReadLine();
-            if(CheckInputForQ(input))
+            if(CheckInputForQuittingTheGame(input))
             {
                 result = false;
             }
@@ -167,10 +171,9 @@ namespace game
             } while (true);
         }
 
-        public static bool CheckInputForQ(string i_Input)
+        public static bool CheckInputForQuittingTheGame(string i_Input)
         {
             return i_Input == "Q";
         }
-
     }
 }

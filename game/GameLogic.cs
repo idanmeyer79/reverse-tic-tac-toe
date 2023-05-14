@@ -67,7 +67,55 @@ namespace game
 
         public void ApplyComputerPlayerTurn()
         {
+            NextMove(out int row, out int col);
+            ApplyMove(row, col);
+        }
 
+        //public void ApplyMinimaxAlgorithm(Player i_CurrentPlayer )
+        //{
+        //    if (Board.IsBoardFull())
+        //    {
+
+        //    }
+
+        //    FindEmptyCell(out int row, out int col);
+
+        //}
+
+        public int MinimaxAlgorithm(BoardGame board, int depth, bool isMaximizing)
+        {
+            if (isMaximizing)
+            {
+
+            }
+        }
+        public void NextMove(out int o_Row, out int o_Col)
+        {
+            int bestScore = -1; // ???
+            o_Row = 0;
+            o_Col = 0;
+
+            for (int i = 0; i < Board.BoardSize; i++)
+            {
+                for (int j = 0; j < Board.BoardSize; j++)
+                {
+                    // change its to Board.isCellEmpty(Board[i, j]) !!!!!!!!!!!!
+                    if (!isCellOnBoardNotEmpty(i + 1, j + 1))
+                    {
+                        Board.SetCellSymbol(i, j, CurrentPlayer.Symbol);
+                        int scoreOfAlgorithm = MinimaxAlgorithm(Board, 0, true);
+                        Board.SetCellSymbol(i, j, Empty);
+                        if (scoreOfAlgorithm > bestScore)
+                        {
+                            bestScore = scoreOfAlgorithm;
+                            // bestMove
+                            o_Row = i;
+                            o_Col = j;
+                        }
+                    }
+                }
+            }
+            Board.SetCellSymbol(o_Row, o_Col, CurrentPlayer.Symbol);
         }
 
         private void switchPlayer()

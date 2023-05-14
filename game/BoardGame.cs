@@ -1,6 +1,6 @@
 ﻿namespace game
 {
-    internal class Board
+    internal class BoardGame
     {
         public const int MinSizeOfBoard = 3;
         public const int MaxSizeOfBoard = 9;
@@ -10,7 +10,7 @@
         public int BoardSize { get; set; }
 
         // ctor
-        public Board(int i_BoardSize)
+        public BoardGame(int i_BoardSize)
         {
             BoardSize = i_BoardSize;
             Cells = new Cell[i_BoardSize, i_BoardSize];

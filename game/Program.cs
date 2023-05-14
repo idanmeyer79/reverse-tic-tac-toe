@@ -2,11 +2,11 @@
 
 namespace game
 {
-    internal class Program
+    public class Program
     {
         public static void Main()
         {
-            Game game = new Game();
+            GameManager game = new GameManager();
             game.RunGame();
         }
     }

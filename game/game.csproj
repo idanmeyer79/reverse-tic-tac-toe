@@ -32,10 +32,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Board.cs" />
+    <Compile Include="BoardGame.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="ConsoleIO.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="GameLogic.cs" />
+    <Compile Include="GameManager.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>

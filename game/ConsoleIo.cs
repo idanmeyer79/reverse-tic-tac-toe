@@ -6,13 +6,16 @@ namespace game
 {
     internal class ConsoleIO
     {
-        public static int WelcomeUserAndGetNumOfPlayers(Game game)
+        public const int Quit = -1;
+
+        public int WelcomeUserAndGetNumOfPlayers()
         {
             Console.WriteLine("Welcome to Reverse Tic Tac Toe!");
 
             return GetNumOfPlayers();
         }
-        public static Player GetPlayerDetailsFromUser(char i_Symbol)
+
+        public Player GetPlayerDetailsFromUser(char i_Symbol)
         {
             Console.Write("Enter player name: ");
             string name = Console.ReadLine()?.Trim();
@@ -20,13 +23,16 @@ namespace game
             return new Player(name, i_Symbol);
         }
 
-        public static void DisplayWhoseTurn(string i_NameOfCurrentPlayer, char i_Symbol)
+        public void DisplayWhoseTurn(string i_NameOfCurrentPlayer, char i_Symbol)
         {
             Console.WriteLine($"It's {i_NameOfCurrentPlayer}'s turn ({i_Symbol})");
         }
-        public static void DisplayBoard(Board i_Board)
+
+        public void DisplayBoard(BoardGame i_Board)
         {
             StringBuilder sb = new StringBuilder();
+
+            Ex02.ConsoleUtils.Screen.Clear();
             for (int j = 0; j < i_Board.BoardSize; j++)
             {
                 sb.Append($"  {j + 1} ");
@@ -55,20 +61,21 @@ namespace game
             Console.WriteLine(sb.ToString());
         }
 
-        public static void DisplayCellIsOccupiedMsg()
+        public void DisplayCellIsOccupiedMsg()
         {
             Console.Write("Cell is already occupied! Please choose an empty cell.\n");
         }
-        public static int GetBoardSizeFromPlayer()
+
+        public int GetBoardSizeFromPlayer()
         {
             // Prompt the user to choose the board size
             bool isValidSize = false;
             int size;
             do
             {
-                Console.Write($"Enter the size of the board ({Board.MinSizeOfBoard}-{Board.MaxSizeOfBoard}): ");
+                Console.Write($"Enter the size of the board ({BoardGame.MinSizeOfBoard}-{BoardGame.MaxSizeOfBoard}): ");
                 string input = Console.ReadLine();
-                if (!int.TryParse(input, out size) || size < Board.MinSizeOfBoard || size > Board.MaxSizeOfBoard)
+                if (!int.TryParse(input, out size) || size < BoardGame.MinSizeOfBoard || size > BoardGame.MaxSizeOfBoard)
                 {
                     Console.Write("invalid input! try again\n");
                     continue;
@@ -80,20 +87,28 @@ namespace game
             return size;
         }
 
-        public static void GetMoveFromPlayer(int i_BoardSize, out int o_row, out int o_col)
+        public bool GetMoveFromPlayer(int i_BoardSize, out int o_row, out int o_col)
         {
+            bool doesPlayerWantToQuit = true;
+
             o_row = GetFromUserBoardValueOfDimension(i_BoardSize, "row");
-            if (o_row != Game.Quit)
+            if (o_row != Quit)
             {
                 o_col = GetFromUserBoardValueOfDimension(i_BoardSize, "column");
+                if(o_col != Quit)
+                {
+                    doesPlayerWantToQuit = false;
+                }
             }
             else
             {
-                o_col = Game.Quit;
+                o_col = Quit;
             }
+
+            return doesPlayerWantToQuit;
         }
 
-        public static int GetFromUserBoardValueOfDimension(int i_BoardSize, string dimension)
+        public int GetFromUserBoardValueOfDimension(int i_BoardSize, string dimension)
         {
             int valueOfDimension;
             bool isValidInput = false;
@@ -103,10 +118,10 @@ namespace game
                 string input = Console.ReadLine().Trim();
                 if (CheckInputForQuittingTheGame(input))
                 {
-                    valueOfDimension = Game.Quit;
+                    valueOfDimension = Quit;
                     isValidInput = true;
                 }
-                else if (!int.TryParse(input, out valueOfDimension) || valueOfDimension < Board.MinValOfDimension || valueOfDimension > i_BoardSize)
+                else if (!int.TryParse(input, out valueOfDimension) || valueOfDimension < BoardGame.MinValOfDimension || valueOfDimension > i_BoardSize)
                 {
                     Console.Write($"Invalid input! Please enter a valid {dimension} number.\n");
                 }
@@ -119,7 +134,7 @@ namespace game
             return valueOfDimension;
         }
 
-        public static void DisplaySummary(Game i_Game)
+        public void DisplaySummary(GameLogic i_Game)
         {
             if(i_Game.Player1.Forfeited)
             {
@@ -143,7 +158,7 @@ namespace game
 {i_Game.Player2.Name} has {i_Game.Player2.Score} points.");
         }
 
-        public static bool DoesPlayerWantToPlayAnotherRound()
+        public bool DoesPlayerWantToPlayAnotherRound()
         {
             bool result = true;
 
@@ -157,7 +172,7 @@ namespace game
             return result;
         }
 
-        public static int GetNumOfPlayers()
+        public int GetNumOfPlayers()
         {
             do
             {
@@ -171,9 +186,14 @@ namespace game
             } while (true);
         }
 
-        public static bool CheckInputForQuittingTheGame(string i_Input)
+        public bool CheckInputForQuittingTheGame(string i_Input)
         {
             return i_Input == "Q";
+        }
+        public void DisplayTheFinalBoardAndSummary(GameLogic i_Game)
+        {
+            DisplayBoard(i_Game.Board);
+            DisplaySummary(i_Game);
         }
     }
 }

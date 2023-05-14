@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace game
+﻿namespace game
 {
     public class Program
     {

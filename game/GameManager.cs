@@ -36,8 +36,6 @@
 
                 while (!GameCore.IsRoundOver)
                 {
-                    UserInterface.DisplayBoard(GameCore.Board);
-                    UserInterface.DisplayWhoseTurn(GameCore.CurrentPlayer.Name, GameCore.CurrentPlayer.Symbol);
                     PlayTurn();
                 }
                 UserInterface.DisplayTheFinalBoardAndSummary(GameCore);
@@ -53,6 +51,8 @@
             }
             else // Human player's turn
             {
+                UserInterface.DisplayBoard(GameCore.Board);
+                UserInterface.DisplayWhoseTurn(GameCore.CurrentPlayer.Name, GameCore.CurrentPlayer.Symbol);
                 ApplyHumanPlayerTurn();
             }
         }

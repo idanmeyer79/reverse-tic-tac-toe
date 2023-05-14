@@ -4,8 +4,8 @@ namespace game
 {
     internal class GameLogic
     {
-        public const int FirstRound = 0;
-        public const char Empty = ' ';
+        public const int k_FirstRound = 0;
+        public const char k_Empty = ' ';
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public Player CurrentPlayer { get; set;}
@@ -14,7 +14,6 @@ namespace game
         public int NumOfRounds { get; set; }
         public bool IsRoundOver { get; set; }
 
-        // Ctor
         public GameLogic(Player i_Player1, Player i_Player2, int i_BoardSize)
         {
             Player1 = i_Player1;
@@ -38,7 +37,6 @@ namespace game
         public void ApplyMove(int i_X, int i_Y)
         {
             Board.SetCellSymbol(i_X, i_Y, CurrentPlayer.Symbol);
-
             CheckForWinner();
             if (!IsRoundOver)
             {
@@ -50,13 +48,11 @@ namespace game
         {
             Random rnd = new Random();
 
-            // Loop until a free cell is found
             while (true)
             {
                 int row = rnd.Next(Board.BoardSize);
                 int col = rnd.Next(Board.BoardSize);
 
-                // Check if the cell is free
                 if (Board.GetCellSymbol(row, col) == ' ')
                 {
                     ApplyMove(row, col);
@@ -94,6 +90,7 @@ namespace game
         private bool checkRowsForWinner()
         {
             bool isWinner = false;
+
             for (int i = 0; i < Board.BoardSize; i++)
             {
                 bool isLosingRow = true;
@@ -105,18 +102,21 @@ namespace game
                         break;
                     }
                 }
+
                 if (isLosingRow)
                 {
                     isWinner = true;
                     break;
                 }
             }
+
             return isWinner;
         }
 
         private bool checkColumnsForWinner()
         {
             bool isWinner = false;
+
             for (int j = 0; j < Board.BoardSize; j++)
             {
                 bool isLosingColumn = true;
@@ -128,12 +128,14 @@ namespace game
                         break;
                     }
                 }
+
                 if (isLosingColumn)
                 {
                     isWinner = true;
                     break;
                 }
             }
+
             return isWinner;
         }
 
@@ -141,17 +143,20 @@ namespace game
         {
             bool isLosingDiagonal1 = true;
             bool isLosingDiagonal2 = true;
+
             for (int i = 0, j = 0; i < Board.BoardSize; i++, j++)
             {
                 if (Board.GetCellSymbol(i, j) != CurrentPlayer.Symbol)
                 {
                     isLosingDiagonal1 = false;
                 }
+
                 if (Board.GetCellSymbol(i, Board.BoardSize - 1 - j) != CurrentPlayer.Symbol)
                 {
                     isLosingDiagonal2 = false;
                 }
             }
+
             return isLosingDiagonal1 || isLosingDiagonal2;
         }
 
@@ -162,7 +167,7 @@ namespace game
 
         public void SetGameForNewRound()
         {
-            if (NumOfRounds++ != FirstRound)
+            if (NumOfRounds++ != k_FirstRound)
             {
                 CurrentPlayer.Forfeited = false;
                 CurrentPlayer = (NumOfRounds) % 2 == 0 ? Player1 : Player2;
@@ -179,9 +184,9 @@ namespace game
             UpdatePointsAfterPlayerForfeits();
         }
 
-        public bool isCellOnBoardNotEmpty(int i_Row, int i_Col)
+        public bool IsCellOnBoardNotEmpty(int i_Row, int i_Col)
         {
-            return Board.GetCellSymbol(i_Row - 1, i_Col - 1) != Empty;
+            return Board.GetCellSymbol(i_Row - 1, i_Col - 1) != k_Empty;
         }
     }
 }

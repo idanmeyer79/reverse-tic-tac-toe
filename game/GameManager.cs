@@ -2,57 +2,58 @@
 {
     internal class GameManager
     {
-        internal GameLogic GameCore;
-        internal ConsoleIO UserInterface;
+        private GameLogic m_GameCore;
+        private ConsoleIO m_UserInterface;
 
         public GameManager()
         {
-            UserInterface = new ConsoleIO();
-            int numOfPlayers = UserInterface.WelcomeUserAndGetNumOfPlayers();
-            Player Player1 = UserInterface.GetPlayerDetailsFromUser('X');
-            Player Player2;
+            m_UserInterface = new ConsoleIO();
+            int numOfPlayers = m_UserInterface.WelcomeUserAndGetNumOfPlayers();
+            Player player1 = m_UserInterface.GetPlayerDetailsFromUser('X');
+            Player player2;
 
             if (numOfPlayers == 1)
             {
-                Player2 = new Player("Computer", 'O')
+                player2 = new Player("Computer", 'O')
                 {
                     IsComputer = true
                 };
             }
             else
             {
-                Player2 = UserInterface.GetPlayerDetailsFromUser('O');
+                player2 = m_UserInterface.GetPlayerDetailsFromUser('O');
             }
 
-            int boardSize = UserInterface.GetBoardSizeFromPlayer();
-            GameCore = new GameLogic(Player1, Player2, boardSize);
+            int boardSize = m_UserInterface.GetBoardSizeFromPlayer();
+            m_GameCore = new GameLogic(player1, player2, boardSize);
         }
 
         public void RunGame()
         {
             do
             {
-                GameCore.SetGameForNewRound();
+                m_GameCore.SetGameForNewRound();
 
-                while (!GameCore.IsRoundOver)
+                while (!m_GameCore.IsRoundOver)
                 {
                     PlayTurn();
                 }
-                UserInterface.DisplayTheFinalBoardAndSummary(GameCore);
+
+                m_UserInterface.DisplayTheFinalBoardAndSummary(m_GameCore);
             }
-            while (UserInterface.DoesPlayerWantToPlayAnotherRound());
+            while (m_UserInterface.DoesPlayerWantToPlayAnotherRound());
         }
 
         public void PlayTurn()
         {
-            if (GameCore.CurrentPlayer.IsComputer)
+            if (m_GameCore.CurrentPlayer.IsComputer)
             {
-                GameCore.PlayComputerTurn();
+                m_GameCore.PlayComputerTurn();
             }
-            else // Human player's turn
+            else
             {
-                UserInterface.DisplayBoard(GameCore.Board);
-                UserInterface.DisplayWhoseTurn(GameCore.CurrentPlayer.Name, GameCore.CurrentPlayer.Symbol);
+                m_UserInterface.DisplayBoard(m_GameCore.Board);
+                m_UserInterface.DisplayWhoseTurn(m_GameCore.CurrentPlayer.Name, m_GameCore.CurrentPlayer.Symbol);
                 ApplyHumanPlayerTurn();
             }
         }
@@ -61,23 +62,23 @@
             bool isMoveApplied = false;
             do
             {
-                bool doesPlayerWantToQuit = UserInterface.GetMoveFromPlayer(GameCore.Board.BoardSize, out int row, out int col);
+                bool doesPlayerWantToQuit = m_UserInterface.GetMoveFromPlayer(m_GameCore.Board.BoardSize, out int row, out int col);
 
                 if (doesPlayerWantToQuit)
                 {
-                    GameCore.PrepareGameForQuitting();
+                    m_GameCore.PrepareGameForQuitting();
                 }
-                else if (GameCore.isCellOnBoardNotEmpty(row, col))
+                else if (m_GameCore.IsCellOnBoardNotEmpty(row, col))
                 {
-                    UserInterface.DisplayCellIsOccupiedMsg();
+                    m_UserInterface.DisplayCellIsOccupiedMsg();
                 }
                 else
                 {
-                    GameCore.ApplyMove(row - 1, col - 1);
+                    m_GameCore.ApplyMove(row - 1, col - 1);
                     isMoveApplied = true;
                 }
             }
-            while (!isMoveApplied && !GameCore.IsRoundOver);
+            while (!isMoveApplied && !m_GameCore.IsRoundOver);
         }
     }
 }

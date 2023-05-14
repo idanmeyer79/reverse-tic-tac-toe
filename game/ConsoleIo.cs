@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Text;
 
-
 namespace game
 {
     internal class ConsoleIO
     {
-        public const int Quit = -1;
+        public const int k_Quit = -1;
 
         public int WelcomeUserAndGetNumOfPlayers()
         {
@@ -37,6 +36,7 @@ namespace game
             {
                 sb.Append($"  {j + 1} ");
             }
+
             sb.AppendLine();
             for (int i = 0; i < i_Board.BoardSize; i++)
             {
@@ -49,6 +49,7 @@ namespace game
                         sb.Append("|");
                     }
                 }
+
                 sb.Append("|");
                 sb.AppendLine();
                 if (i <= i_Board.BoardSize)
@@ -58,6 +59,7 @@ namespace game
                     sb.AppendLine();
                 }
             }
+
             Console.WriteLine(sb.ToString());
         }
 
@@ -73,9 +75,9 @@ namespace game
             int size;
             do
             {
-                Console.Write($"Enter the size of the board ({BoardGame.MinSizeOfBoard}-{BoardGame.MaxSizeOfBoard}): ");
+                Console.Write($"Enter the size of the board ({BoardGame.k_MinSizeOfBoard}-{BoardGame.k_MaxSizeOfBoard}): ");
                 string input = Console.ReadLine();
-                if (!int.TryParse(input, out size) || size < BoardGame.MinSizeOfBoard || size > BoardGame.MaxSizeOfBoard)
+                if (!int.TryParse(input, out size) || size < BoardGame.k_MinSizeOfBoard || size > BoardGame.k_MaxSizeOfBoard)
                 {
                     Console.Write("invalid input! try again\n");
                     continue;
@@ -92,43 +94,44 @@ namespace game
             bool doesPlayerWantToQuit = true;
 
             o_row = GetFromUserBoardValueOfDimension(i_BoardSize, "row");
-            if (o_row != Quit)
+            if (o_row != k_Quit)
             {
                 o_col = GetFromUserBoardValueOfDimension(i_BoardSize, "column");
-                if(o_col != Quit)
+                if(o_col != k_Quit)
                 {
                     doesPlayerWantToQuit = false;
                 }
             }
             else
             {
-                o_col = Quit;
+                o_col = k_Quit;
             }
 
             return doesPlayerWantToQuit;
         }
 
-        public int GetFromUserBoardValueOfDimension(int i_BoardSize, string dimension)
+        public int GetFromUserBoardValueOfDimension(int i_BoardSize, string i_Dimension)
         {
             int valueOfDimension;
             bool isValidInput = false;
             do
             {
-                Console.Write($"Enter the {dimension} number of your move (1-{i_BoardSize}): ");
+                Console.Write($"Enter the {i_Dimension} number of your move (1-{i_BoardSize}): ");
                 string input = Console.ReadLine().Trim();
                 if (CheckInputForQuittingTheGame(input))
                 {
-                    valueOfDimension = Quit;
+                    valueOfDimension = k_Quit;
                     isValidInput = true;
                 }
-                else if (!int.TryParse(input, out valueOfDimension) || valueOfDimension < BoardGame.MinValOfDimension || valueOfDimension > i_BoardSize)
+                else if (!int.TryParse(input, out valueOfDimension) || valueOfDimension < BoardGame.k_MinValOfDimension || valueOfDimension > i_BoardSize)
                 {
-                    Console.Write($"Invalid input! Please enter a valid {dimension} number.\n");
+                    Console.Write($"Invalid input! Please enter a valid {i_Dimension} number.\n");
                 }
                 else
                 {
                     isValidInput = true;
                 }
+
             } while (!isValidInput);
 
             return valueOfDimension;
@@ -182,6 +185,7 @@ namespace game
                 {
                     return numPlayers;
                 }
+
                 Console.WriteLine("Invalid input. Please enter 1 or 2.");
             } while (true);
         }

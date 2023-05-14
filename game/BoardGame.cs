@@ -2,14 +2,12 @@
 {
     internal class BoardGame
     {
-        public const int MinSizeOfBoard = 3;
-        public const int MaxSizeOfBoard = 9;
-        public const int MinValOfDimension = 1;
+        public const int k_MinSizeOfBoard = 3;
+        public const int k_MaxSizeOfBoard = 9;
+        public const int k_MinValOfDimension = 1;
         public Cell[,] Cells { get; set; }
-
         public int BoardSize { get; set; }
 
-        // ctor
         public BoardGame(int i_BoardSize)
         {
             BoardSize = i_BoardSize;
@@ -23,7 +21,6 @@
             }
         }
 
-        // Methods
         public void SetCellSymbol(int i_X, int i_Y, char i_Symbol)
         {
             Cells[i_X, i_Y].Symbol = i_Symbol;

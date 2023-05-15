@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace game
 {
@@ -13,7 +14,7 @@ namespace game
         public const int k_FirstRound = 0;
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
-        public Player CurrentPlayer { get; set;}
+        public Player CurrentPlayer { get; set; }
         public Player Winner { get; set; }
         public BoardGame Board { get; set; }
         public int NumOfRounds { get; set; }
@@ -88,7 +89,7 @@ namespace game
         {
             int scoreOfAlgorithm = 0;
 
-            if (i_Depth == 7)
+            if (i_Depth == 8)
             {
                 return 0;
             }
@@ -97,11 +98,11 @@ namespace game
             {
                 if (CurrentPlayer.IsComputer)
                 {
-                    scoreOfAlgorithm = -10; // שיקח מהלך שבו הוא מנצח מהר יותר
+                    scoreOfAlgorithm = -1; // שיקח מהלך שבו הוא מנצח מהר יותר
                 }
                 else
                 {
-                    scoreOfAlgorithm = 10;
+                    scoreOfAlgorithm = 1;
                 }
             }
             else if (!Board.IsBoardFull())
@@ -124,33 +125,33 @@ namespace game
             {
                 bestScore = Int32.MaxValue;
             }
-        
+
             io_Col = 0;
             io_Row = 0;
-
-            for (int i = 0; i < Board.EmptyCells.Count && i < 7 - i_Depth; i++)
+            for (int i = 0; i < Board.EmptyCells.Count && i < 8 - i_Depth; i++)
             {
                 Cell currCell = Board.EmptyCells[i];
                 Board.EmptyCells.Remove(currCell);
                 Board.SetCellSymbol(currCell.XDimension, currCell.YDimension, CurrentPlayer.Symbol);
                 int scoreOfAlgorithm = MinimaxAlgorithm(i_Depth);
                 Board.CleanCell(currCell.XDimension, currCell.YDimension);
-                Board.EmptyCells.Add(currCell);
+                Board.EmptyCells.Insert(0, currCell);
+
                 if ((CurrentPlayer.IsComputer && scoreOfAlgorithm > bestScore) ||
                     (!CurrentPlayer.IsComputer && scoreOfAlgorithm < bestScore))
                 {
                     bestScore = scoreOfAlgorithm;
                     // bestMove
-                    if (i_Depth == 0)
-                    {
-                        io_Row = currCell.XDimension;
-                        io_Col = currCell.YDimension;
-                    }
+
+                    io_Row = currCell.XDimension;
+                    io_Col = currCell.YDimension;
+
 
                 }
 
             }
             return bestScore;
+
         }
 
         private void switchPlayer()
@@ -268,7 +269,7 @@ namespace game
                 Board = new BoardGame(Board.BoardSize);
                 IsRoundOver = false;
                 Winner = null;
-            }        
+            }
         }
 
         public void PrepareGameForQuitting()

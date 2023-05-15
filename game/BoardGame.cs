@@ -10,6 +10,7 @@ namespace game
         public const int k_MinValOfDimension = 1;
         public Cell[,] Cells { get; set; }
         public List<Cell> EmptyCells;
+        //public Cell FirstEmptyCell;
         public int BoardSize { get; set; }
         public BoardGame(int i_BoardSize)
         {
@@ -24,6 +25,7 @@ namespace game
                     EmptyCells.Add(Cells[i, j]);
                 }
             }
+            //FirstEmptyCell = new Cell(0, 0);
         }
 
         public void SetCellSymbol(int i_X, int i_Y, char i_Symbol)

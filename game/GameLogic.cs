@@ -54,55 +54,54 @@ namespace game
         public void PlayComputerTurn()
         {
             Random rnd = new Random();
+            bool isRandomCellHasFound = false;
 
-            while (true)
+            while (!isRandomCellHasFound)
             {
                 int row = rnd.Next(Board.BoardSize);
                 int col = rnd.Next(Board.BoardSize);
 
                 if (Board.IsCellOnBoardEmpty(row, col))
                 {
-                    ApplyMove(row, col);
-                    return;
+                    Board.SetCellSymbol(row, col, CurrentPlayer.Symbol);
+                    bool isThereWinner = CheckForWinner();
+                    Board.CleanCell(row, col);
+                    if (!isThereWinner)
+                    {
+                        ApplyMove(row, col);
+                        isRandomCellHasFound = true;
+                    } 
                 }
             }
         }
 
         public void ApplyComputerPlayerTurn()
         {
-            NextMove(out int row, out int col, 0);
-            ApplyMove(row, col);
+            if(Board.EmptyCells.Count > 8)
+            {
+                PlayComputerTurn();
+            }
+            else
+            {
+                NextMove(out int row, out int col, 0);
+                ApplyMove(row, col);
+            }
+
         }
-
-        //public void ApplyMinimaxAlgorithm(Player i_CurrentPlayer )
-        //{
-        //    if (Board.IsBoardFull())
-        //    {
-
-        //    }
-
-        //    FindEmptyCell(out int row, out int col);
-
-        //}
 
         public int MinimaxAlgorithm(int i_Depth)
         {
             int scoreOfAlgorithm = 0;
 
-            if (i_Depth == 8)
-            {
-                return 0;
-            }
-
             if (CheckForWinner()) // if there is a winner while its current player's turn, then it implies that the current player has lost.
             {
                 if (CurrentPlayer.IsComputer)
                 {
-                    scoreOfAlgorithm = -1; // שיקח מהלך שבו הוא מנצח מהר יותר
+                    scoreOfAlgorithm = -10; // שיקח מהלך שבו הוא מנצח מהר יותר
                 }
                 else
                 {
-                    scoreOfAlgorithm = 1;
+                    scoreOfAlgorithm = 10;
                 }
             }
             else if (!Board.IsBoardFull())
@@ -128,7 +127,7 @@ namespace game
 
             io_Col = 0;
             io_Row = 0;
-            for (int i = 0; i < Board.EmptyCells.Count && i < 8 - i_Depth; i++)
+            for (int i = 0; i < Board.EmptyCells.Count; i++)
             {
                 Cell currCell = Board.EmptyCells[i];
                 Board.EmptyCells.Remove(currCell);
@@ -142,7 +141,6 @@ namespace game
                 {
                     bestScore = scoreOfAlgorithm;
                     // bestMove
-
                     io_Row = currCell.XDimension;
                     io_Col = currCell.YDimension;
 
@@ -278,7 +276,5 @@ namespace game
             CurrentPlayer.Forfeited = true;
             UpdatePointsAfterPlayerForfeits();
         }
-
-
     }
 }

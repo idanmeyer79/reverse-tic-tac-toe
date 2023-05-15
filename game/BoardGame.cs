@@ -25,20 +25,19 @@ namespace game
                     EmptyCells.Add(Cells[i, j]);
                 }
             }
-            //FirstEmptyCell = new Cell(0, 0);
         }
 
-        public void SetCellSymbol(int i_X, int i_Y, char i_Symbol)
+        internal void SetCellSymbol(int i_X, int i_Y, char i_Symbol)
         {
             Cells[i_X, i_Y].Symbol = i_Symbol;
         }
 
-        public char GetCellSymbol(int i_X, int i_Y)
+        internal char GetCellSymbol(int i_X, int i_Y)
         {
             return Cells[i_X, i_Y].Symbol;
         }
 
-        public bool IsBoardFull() ///////////////////// if the lst empty
+        internal bool IsBoardFull() ///////////////////// if the lst empty
         {
             bool isEmpty = true;
 
@@ -52,12 +51,13 @@ namespace game
 
             return isEmpty;
         }
-        public bool IsCellOnBoardEmpty(int i_Row, int i_Col)
+
+        internal bool IsCellOnBoardEmpty(int i_Row, int i_Col)
         {
             return GetCellSymbol(i_Row, i_Col) == k_Empty;
         }
 
-        public void CleanCell(int i_Row, int i_Col)
+        internal void CleanCell(int i_Row, int i_Col)
         {
             SetCellSymbol(i_Row, i_Col, k_Empty);
         }

@@ -13,7 +13,7 @@
             YDimension = i_YDimension;
         }
 
-        public bool IsCellEmpty()
+        internal bool IsCellEmpty()
         {
             return Symbol == ' ';
         }

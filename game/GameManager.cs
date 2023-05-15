@@ -33,10 +33,9 @@
             do
             {
                 m_GameCore.SetGameForNewRound();
-
                 while (!m_GameCore.IsRoundOver)
                 {
-                    PlayTurn();
+                    playTurn();
                 }
 
                 m_UserInterface.DisplayTheFinalBoardAndSummary(m_GameCore);
@@ -44,7 +43,7 @@
             while (m_UserInterface.DoesPlayerWantToPlayAnotherRound());
         }
 
-        private void PlayTurn()
+        private void playTurn()
         {
             if (m_GameCore.CurrentPlayer.IsComputer)
             {
@@ -54,17 +53,17 @@
             {
                 m_UserInterface.DisplayBoard(m_GameCore.Board);
                 m_UserInterface.DisplayWhoseTurn(m_GameCore.CurrentPlayer.Name, m_GameCore.CurrentPlayer.Symbol);
-                ApplyHumanPlayerTurn();
+                applyHumanPlayerTurn();
             }
         }
 
-        private void ApplyHumanPlayerTurn()
+        private void applyHumanPlayerTurn()
         {
             bool isMoveApplied = false;
+
             do
             {
                 bool doesPlayerWantToQuit = m_UserInterface.GetMoveFromPlayer(m_GameCore.Board.BoardSize, out int row, out int col);
-
                 if (doesPlayerWantToQuit)
                 {
                     m_GameCore.PrepareGameForQuitting();
@@ -78,7 +77,7 @@
                     m_GameCore.ApplyMove(row - 1, col - 1);
                     isMoveApplied = true;
                 }
-            }
+            } 
             while (!isMoveApplied && !m_GameCore.IsRoundOver);
         }
     }

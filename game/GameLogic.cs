@@ -121,11 +121,11 @@ namespace game
             o_Row = 0;
             if (CurrentPlayer.IsComputer)
             {
-                bestScore = Int32.MinValue;
+                bestScore = int.MinValue;
             }
             else
             {
-                bestScore = Int32.MaxValue;
+                bestScore = int.MaxValue;
             }
 
             for (int i = 0; i < Board.EmptyCells.Count; i++)
@@ -177,16 +177,8 @@ namespace game
 
         private bool checkForWinner()
         {
-            bool isThereWinner = false;
-
-            if (checkRowsForWinner() || checkColumnsForWinner() || checkDiagonalsForWinner())
-            {
-                isThereWinner = true;
-            }
-
-            return isThereWinner;
+            return (checkRowsForWinner() || checkColumnsForWinner() || checkDiagonalsForWinner());
         }
-
 
         private bool checkRowsForWinner()
         {

@@ -12,7 +12,7 @@ namespace game
         {
             Console.WriteLine("Welcome to Reverse Tic Tac Toe!");
 
-            return GetNumOfPlayers();
+            return getNumOfPlayers();
         }
 
         internal Player GetPlayerDetailsFromUser(char i_Symbol)
@@ -24,7 +24,6 @@ namespace game
             {
                 Console.Write("Enter player name: ");
                 name = Console.ReadLine()?.Trim();
-
                 if (!string.IsNullOrWhiteSpace(name) && name.All(c => Char.IsLetter(c) || Char.IsWhiteSpace(c)))
                 {
                     isValidName = true;
@@ -86,9 +85,9 @@ namespace game
 
         internal int GetBoardSizeFromPlayer()
         {
-            // Prompt the user to choose the board size
             bool isValidSize = false;
             int size;
+
             do
             {
                 Console.Write($"Enter the size of the board ({BoardGame.k_MinSizeOfBoard}-{BoardGame.k_MaxSizeOfBoard}): ");
@@ -100,7 +99,8 @@ namespace game
                 }
 
                 isValidSize = true;
-            } while (isValidSize == false);
+            } 
+            while (isValidSize == false);
 
             return size;
         }
@@ -109,10 +109,10 @@ namespace game
         {
             bool doesPlayerWantToQuit = true;
 
-            o_row = GetFromUserBoardValueOfDimension(i_BoardSize, "row");
+            o_row = getFromUserBoardValueOfDimension(i_BoardSize, "row");
             if (o_row != k_Quit)
             {
-                o_col = GetFromUserBoardValueOfDimension(i_BoardSize, "column");
+                o_col = getFromUserBoardValueOfDimension(i_BoardSize, "column");
                 if(o_col != k_Quit)
                 {
                     doesPlayerWantToQuit = false;
@@ -126,15 +126,16 @@ namespace game
             return doesPlayerWantToQuit;
         }
 
-        private int GetFromUserBoardValueOfDimension(int i_BoardSize, string i_Dimension)
+        private int getFromUserBoardValueOfDimension(int i_BoardSize, string i_Dimension)
         {
             int valueOfDimension;
             bool isValidInput = false;
+
             do
             {
                 Console.Write($"Enter the {i_Dimension} number of your move (1-{i_BoardSize}): ");
                 string input = Console.ReadLine().Trim();
-                if (CheckInputForQuittingTheGame(input))
+                if (checkInputForQuittingTheGame(input))
                 {
                     valueOfDimension = k_Quit;
                     isValidInput = true;
@@ -147,13 +148,13 @@ namespace game
                 {
                     isValidInput = true;
                 }
-
-            } while (!isValidInput);
+            } 
+            while (!isValidInput);
 
             return valueOfDimension;
         }
 
-        private void DisplaySummary(GameLogic i_Game)
+        private void displaySummary(GameLogic i_Game)
         {
             if(i_Game.Player1.Forfeited)
             {
@@ -183,7 +184,7 @@ namespace game
 
             Console.WriteLine("Press any key to play again or 'Q' to quit the game");
             string input = Console.ReadLine();
-            if(CheckInputForQuittingTheGame(input))
+            if(checkInputForQuittingTheGame(input))
             {
                 result = false;
             }
@@ -191,22 +192,28 @@ namespace game
             return result;
         }
 
-        private int GetNumOfPlayers()
+        private int getNumOfPlayers()
         {
+            bool isValidInput = false;
+            int numPlayers = 0;
+
             do
             {
                 Console.Write("Enter number of players (1 or 2): ");
                 string input = Console.ReadLine()?.Trim();
-                if (int.TryParse(input, out int numPlayers) && (numPlayers == 1 || numPlayers == 2))
+                if (int.TryParse(input, out numPlayers) && (numPlayers == 1 || numPlayers == 2))
                 {
-                    return numPlayers;
+                    break;
                 }
 
                 Console.WriteLine("Invalid input. Please enter 1 or 2.");
-            } while (true);
+            } 
+            while (!isValidInput);
+
+            return numPlayers;
         }
 
-        private bool CheckInputForQuittingTheGame(string i_Input)
+        private bool checkInputForQuittingTheGame(string i_Input)
         {
             return i_Input == "Q";
         }
@@ -214,7 +221,7 @@ namespace game
         internal void DisplayTheFinalBoardAndSummary(GameLogic i_Game)
         {
             DisplayBoard(i_Game.Board);
-            DisplaySummary(i_Game);
+            displaySummary(i_Game);
         }
     }
 }

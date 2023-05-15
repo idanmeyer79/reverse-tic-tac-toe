@@ -41,6 +41,7 @@ namespace game
 
         public void ApplyMove(int i_X, int i_Y)
         {
+            Board.EmptyCells.Remove(Board.Cells[i_X, i_Y]);
             Board.SetCellSymbol(i_X, i_Y, CurrentPlayer.Symbol);
             CheckGameStatusAndUpdate();
             if (!IsRoundOver)
@@ -68,7 +69,7 @@ namespace game
 
         public void ApplyComputerPlayerTurn()
         {
-            NextMove(out int row, out int col, 0, 0, 0);
+            NextMove(out int row, out int col, 0);
             ApplyMove(row, col);
         }
 
@@ -83,9 +84,14 @@ namespace game
 
         //}
 
-        public int MinimaxAlgorithm(int i_FirstIndex, int i_SecIndex, int i_Depth)
+        public int MinimaxAlgorithm(int i_Depth)
         {
             int scoreOfAlgorithm = 0;
+
+            if (i_Depth == 7)
+            {
+                return 0;
+            }
 
             if (CheckForWinner()) // if there is a winner while its current player's turn, then it implies that the current player has lost.
             {
@@ -101,13 +107,13 @@ namespace game
             else if (!Board.IsBoardFull())
             {
                 switchPlayer();
-                scoreOfAlgorithm = NextMove(out int row, out int col, i_FirstIndex, i_SecIndex, i_Depth + 1);
+                scoreOfAlgorithm = NextMove(out int row, out int col, i_Depth + 1);
                 switchPlayer();
             }
 
             return scoreOfAlgorithm;
         }
-        public int NextMove(out int io_Row, out int io_Col, int i_FirstIndex, int i_SecIndex, int i_Depth)
+        public int NextMove(out int io_Row, out int io_Col, int i_Depth)
         {
             int bestScore;
             if (CurrentPlayer.IsComputer)
@@ -122,31 +128,28 @@ namespace game
             io_Col = 0;
             io_Row = 0;
 
-            for (int i = i_FirstIndex; i < Board.BoardSize; i++)
+            for (int i = 0; i < Board.EmptyCells.Count && i < 7 - i_Depth; i++)
             {
-                for (int j = i_SecIndex; j < Board.BoardSize; j++)
+                Cell currCell = Board.EmptyCells[i];
+                Board.EmptyCells.Remove(currCell);
+                Board.SetCellSymbol(currCell.XDimension, currCell.YDimension, CurrentPlayer.Symbol);
+                int scoreOfAlgorithm = MinimaxAlgorithm(i_Depth);
+                Board.CleanCell(currCell.XDimension, currCell.YDimension);
+                Board.EmptyCells.Add(currCell);
+                if ((CurrentPlayer.IsComputer && scoreOfAlgorithm > bestScore) ||
+                    (!CurrentPlayer.IsComputer && scoreOfAlgorithm < bestScore))
                 {
-                    if (Board.IsCellOnBoardEmpty(i, j))
+                    bestScore = scoreOfAlgorithm;
+                    // bestMove
+                    if (i_Depth == 0)
                     {
-                        Board.SetCellSymbol(i, j, CurrentPlayer.Symbol);
-                        int scoreOfAlgorithm = MinimaxAlgorithm(i, j, i_Depth);
-                        Board.CleanCell(i, j);
-                        if((CurrentPlayer.IsComputer && scoreOfAlgorithm > bestScore) ||
-                            (!CurrentPlayer.IsComputer && scoreOfAlgorithm < bestScore))
-                        {
-                            bestScore = scoreOfAlgorithm;
-                            // bestMove
-                            if(i_Depth == 0)
-                            {
-                                io_Row = i;
-                                io_Col = j;
-                            }
-                           
-                        }
+                        io_Row = currCell.XDimension;
+                        io_Col = currCell.YDimension;
                     }
-                }
-            }
 
+                }
+
+            }
             return bestScore;
         }
 

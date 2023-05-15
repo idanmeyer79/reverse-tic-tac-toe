@@ -68,7 +68,7 @@ namespace game
 
         public void ApplyComputerPlayerTurn()
         {
-            NextMove(out int row, out int col, 0);
+            NextMove(out int row, out int col, 0, 0, 0);
             ApplyMove(row, col);
         }
 
@@ -83,7 +83,7 @@ namespace game
 
         //}
 
-        public int MinimaxAlgorithm(int i_Depth)
+        public int MinimaxAlgorithm(int i_FirstIndex, int i_SecIndex, int i_Depth)
         {
             int scoreOfAlgorithm = 0;
 
@@ -91,23 +91,23 @@ namespace game
             {
                 if (CurrentPlayer.IsComputer)
                 {
-                    scoreOfAlgorithm = -1;
+                    scoreOfAlgorithm = -10; // שיקח מהלך שבו הוא מנצח מהר יותר
                 }
                 else
                 {
-                    scoreOfAlgorithm = 1;
+                    scoreOfAlgorithm = 10;
                 }
             }
             else if (!Board.IsBoardFull())
             {
                 switchPlayer();
-                scoreOfAlgorithm = NextMove(out int row, out int col, i_Depth + 1);
+                scoreOfAlgorithm = NextMove(out int row, out int col, i_FirstIndex, i_SecIndex, i_Depth + 1);
                 switchPlayer();
             }
 
             return scoreOfAlgorithm;
         }
-        public int NextMove(out int io_Row, out int io_Col, int i_Depth)
+        public int NextMove(out int io_Row, out int io_Col, int i_FirstIndex, int i_SecIndex, int i_Depth)
         {
             int bestScore;
             if (CurrentPlayer.IsComputer)
@@ -122,14 +122,14 @@ namespace game
             io_Col = 0;
             io_Row = 0;
 
-            for (int i = 0; i < Board.BoardSize; i++)
+            for (int i = i_FirstIndex; i < Board.BoardSize; i++)
             {
-                for (int j = 0; j < Board.BoardSize; j++)
+                for (int j = i_SecIndex; j < Board.BoardSize; j++)
                 {
                     if (Board.IsCellOnBoardEmpty(i, j))
                     {
                         Board.SetCellSymbol(i, j, CurrentPlayer.Symbol);
-                        int scoreOfAlgorithm = MinimaxAlgorithm(i_Depth);
+                        int scoreOfAlgorithm = MinimaxAlgorithm(i, j, i_Depth);
                         Board.CleanCell(i, j);
                         if((CurrentPlayer.IsComputer && scoreOfAlgorithm > bestScore) ||
                             (!CurrentPlayer.IsComputer && scoreOfAlgorithm < bestScore))

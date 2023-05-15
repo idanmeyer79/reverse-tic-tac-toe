@@ -2,21 +2,21 @@
 {
     internal class Cell
     {
-        public char Symbol { get; set; }
-        public int XDimension { get; set; }
-        public int YDimension { get; set; }
+        private const char k_Empty = ' ';
+        internal char Symbol { get; set; }
+        internal int XDimension { get; set; }
+        internal int YDimension { get; set; }
 
-        public Cell(int i_XDimension, int i_YDimension)
+        internal Cell(int i_XDimension, int i_YDimension)
         {
-            Symbol = ' ';
+            Symbol = k_Empty;
             XDimension = i_XDimension;
             YDimension = i_YDimension;
         }
 
         internal bool IsCellEmpty()
         {
-            return Symbol == ' ';
+            return Symbol == k_Empty;
         }
     }
-
 }

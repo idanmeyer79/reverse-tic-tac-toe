@@ -4,15 +4,15 @@ namespace game
 {
     internal class BoardGame
     {
-        public const char k_Empty = ' ';
-        public const int k_MinSizeOfBoard = 3;
-        public const int k_MaxSizeOfBoard = 9;
-        public const int k_MinValOfDimension = 1;
-        public Cell[,] Cells { get; set; }
-        public List<Cell> EmptyCells;
-        //public Cell FirstEmptyCell;
-        public int BoardSize { get; set; }
-        public BoardGame(int i_BoardSize)
+        private const char k_Empty = ' ';
+        internal const int k_MinSizeOfBoard = 3;
+        internal const int k_MaxSizeOfBoard = 9;
+        internal const int k_MinValOfDimension = 1;
+        internal Cell[,] Cells { get; set; }
+        internal List<Cell> EmptyCells { get; set; }
+        internal int BoardSize { get; set; }
+        
+        internal BoardGame(int i_BoardSize)
         {
             BoardSize = i_BoardSize;
             Cells = new Cell[i_BoardSize, i_BoardSize];
@@ -37,24 +37,14 @@ namespace game
             return Cells[i_X, i_Y].Symbol;
         }
 
-        internal bool IsBoardFull() ///////////////////// if the lst empty
+        internal bool IsBoardFull()
         {
-            bool isEmpty = true;
-
-            foreach(Cell cell in Cells)
-            {
-                if(cell.IsCellEmpty())
-                {
-                    isEmpty = false;
-                }
-            }
-
-            return isEmpty;
+            return EmptyCells.Count == 0;
         }
 
         internal bool IsCellOnBoardEmpty(int i_Row, int i_Col)
         {
-            return GetCellSymbol(i_Row, i_Col) == k_Empty;
+            return Cells[i_Row, i_Col].IsCellEmpty();
         }
 
         internal void CleanCell(int i_Row, int i_Col)

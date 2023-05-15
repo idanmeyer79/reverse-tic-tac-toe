@@ -5,7 +5,7 @@
         private GameLogic m_GameCore;
         private ConsoleIO m_UserInterface;
 
-        public GameManager()
+        internal GameManager()
         {
             m_UserInterface = new ConsoleIO();
             int numOfPlayers = m_UserInterface.WelcomeUserAndGetNumOfPlayers();
@@ -28,7 +28,7 @@
             m_GameCore = new GameLogic(player1, player2, boardSize);
         }
 
-        public void RunGame()
+        internal void RunGame()
         {
             do
             {
@@ -44,7 +44,7 @@
             while (m_UserInterface.DoesPlayerWantToPlayAnotherRound());
         }
 
-        public void PlayTurn()
+        private void PlayTurn()
         {
             if (m_GameCore.CurrentPlayer.IsComputer)
             {
@@ -57,7 +57,8 @@
                 ApplyHumanPlayerTurn();
             }
         }
-        public void ApplyHumanPlayerTurn()
+
+        private void ApplyHumanPlayerTurn()
         {
             bool isMoveApplied = false;
             do

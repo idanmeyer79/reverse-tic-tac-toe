@@ -1,33 +1,49 @@
 ﻿using System;
 using System.Text;
+using System.Linq;
 
 namespace game
 {
     internal class ConsoleIO
     {
-        public const int k_Quit = -1;
+        internal const int k_Quit = -1;
 
-        public int WelcomeUserAndGetNumOfPlayers()
+        internal int WelcomeUserAndGetNumOfPlayers()
         {
             Console.WriteLine("Welcome to Reverse Tic Tac Toe!");
 
             return GetNumOfPlayers();
         }
 
-        public Player GetPlayerDetailsFromUser(char i_Symbol)
+        internal Player GetPlayerDetailsFromUser(char i_Symbol)
         {
-            Console.Write("Enter player name: ");
-            string name = Console.ReadLine()?.Trim();
+            string name = string.Empty;
+            bool isValidName = false;
+
+            while (!isValidName)
+            {
+                Console.Write("Enter player name: ");
+                name = Console.ReadLine()?.Trim();
+
+                if (!string.IsNullOrWhiteSpace(name) && name.All(c => Char.IsLetter(c) || Char.IsWhiteSpace(c)))
+                {
+                    isValidName = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid name. Please enter a name that contains only letters and spaces and is not empty.");
+                }
+            }
 
             return new Player(name, i_Symbol);
         }
 
-        public void DisplayWhoseTurn(string i_NameOfCurrentPlayer, char i_Symbol)
+        internal void DisplayWhoseTurn(string i_NameOfCurrentPlayer, char i_Symbol)
         {
             Console.WriteLine($"It's {i_NameOfCurrentPlayer}'s turn ({i_Symbol})");
         }
 
-        public void DisplayBoard(BoardGame i_Board)
+        internal void DisplayBoard(BoardGame i_Board)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -63,12 +79,12 @@ namespace game
             Console.WriteLine(sb.ToString());
         }
 
-        public void DisplayCellIsOccupiedMsg()
+        internal void DisplayCellIsOccupiedMsg()
         {
             Console.Write("Cell is already occupied! Please choose an empty cell.\n");
         }
 
-        public int GetBoardSizeFromPlayer()
+        internal int GetBoardSizeFromPlayer()
         {
             // Prompt the user to choose the board size
             bool isValidSize = false;
@@ -89,7 +105,7 @@ namespace game
             return size;
         }
 
-        public bool GetMoveFromPlayer(int i_BoardSize, out int o_row, out int o_col)
+        internal bool GetMoveFromPlayer(int i_BoardSize, out int o_row, out int o_col)
         {
             bool doesPlayerWantToQuit = true;
 
@@ -110,7 +126,7 @@ namespace game
             return doesPlayerWantToQuit;
         }
 
-        public int GetFromUserBoardValueOfDimension(int i_BoardSize, string i_Dimension)
+        private int GetFromUserBoardValueOfDimension(int i_BoardSize, string i_Dimension)
         {
             int valueOfDimension;
             bool isValidInput = false;
@@ -137,7 +153,7 @@ namespace game
             return valueOfDimension;
         }
 
-        public void DisplaySummary(GameLogic i_Game)
+        private void DisplaySummary(GameLogic i_Game)
         {
             if(i_Game.Player1.Forfeited)
             {
@@ -161,7 +177,7 @@ namespace game
 {i_Game.Player2.Name} has {i_Game.Player2.Score} points.");
         }
 
-        public bool DoesPlayerWantToPlayAnotherRound()
+        internal bool DoesPlayerWantToPlayAnotherRound()
         {
             bool result = true;
 
@@ -175,7 +191,7 @@ namespace game
             return result;
         }
 
-        public int GetNumOfPlayers()
+        private int GetNumOfPlayers()
         {
             do
             {
@@ -190,11 +206,12 @@ namespace game
             } while (true);
         }
 
-        public bool CheckInputForQuittingTheGame(string i_Input)
+        private bool CheckInputForQuittingTheGame(string i_Input)
         {
             return i_Input == "Q";
         }
-        public void DisplayTheFinalBoardAndSummary(GameLogic i_Game)
+
+        internal void DisplayTheFinalBoardAndSummary(GameLogic i_Game)
         {
             DisplayBoard(i_Game.Board);
             DisplaySummary(i_Game);

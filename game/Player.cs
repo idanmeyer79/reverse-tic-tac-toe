@@ -1,18 +1,20 @@
-﻿namespace game
+﻿using System.Globalization;
+
+namespace game
 {
     internal class Player
     {
-        public string Name { get; set; }
-        public char Symbol { get; set; }
-        public bool IsComputer { get; set; }
-        public int Score { get; set; }
-        public bool Forfeited { get; set; }
+        internal string Name { get; set; }
+        internal char Symbol { get; set; }
+        internal bool IsComputer { get; set; }
+        internal int Score { get; set; }
+        internal bool Forfeited { get; set; }
 
-        public Player(string i_Name, char i_Symbol)
+        internal Player(string i_Name, char i_Symbol)
         {
-            Name = char.ToUpper(i_Name[0]) + i_Name.Substring(1);
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            Name = textInfo.ToTitleCase(i_Name.ToLower());
             Symbol = i_Symbol;
         }
     }
-
 }

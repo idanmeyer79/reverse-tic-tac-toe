@@ -2,6 +2,7 @@
 {
     internal class BoardGame
     {
+        public const char k_Empty = ' ';
         public const int k_MinSizeOfBoard = 3;
         public const int k_MaxSizeOfBoard = 9;
         public const int k_MinValOfDimension = 1;
@@ -44,6 +45,15 @@
             }
 
             return isEmpty;
+        }
+        public bool IsCellOnBoardEmpty(int i_Row, int i_Col)
+        {
+            return GetCellSymbol(i_Row, i_Col) == k_Empty;
+        }
+
+        public void CleanCell(int i_Row, int i_Col)
+        {
+            SetCellSymbol(i_Row, i_Col, k_Empty);
         }
     }
 }

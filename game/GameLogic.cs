@@ -4,8 +4,13 @@ namespace game
 {
     internal class GameLogic
     {
+        //public enum eGameState
+        //{
+        //    X = 1,
+        //    O = -1,
+        //    TIE = 0,
+        //}
         public const int k_FirstRound = 0;
-        public const char k_Empty = ' ';
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public Player CurrentPlayer { get; set;}
@@ -37,7 +42,7 @@ namespace game
         public void ApplyMove(int i_X, int i_Y)
         {
             Board.SetCellSymbol(i_X, i_Y, CurrentPlayer.Symbol);
-            CheckForWinner();
+            CheckGameStatusAndUpdate();
             if (!IsRoundOver)
             {
                 switchPlayer();
@@ -53,7 +58,7 @@ namespace game
                 int row = rnd.Next(Board.BoardSize);
                 int col = rnd.Next(Board.BoardSize);
 
-                if (Board.GetCellSymbol(row, col) == ' ')
+                if (Board.IsCellOnBoardEmpty(row, col))
                 {
                     ApplyMove(row, col);
                     return;
@@ -63,7 +68,7 @@ namespace game
 
         public void ApplyComputerPlayerTurn()
         {
-            NextMove(out int row, out int col);
+            NextMove(out int row, out int col, 0);
             ApplyMove(row, col);
         }
 
@@ -78,40 +83,71 @@ namespace game
 
         //}
 
-        public int MinimaxAlgorithm(BoardGame board, int depth, bool isMaximizing)
+        public int MinimaxAlgorithm(int i_Depth)
         {
-            if (isMaximizing)
-            {
+            int scoreOfAlgorithm = 0;
 
+            if (CheckForWinner()) // if there is a winner while its current player's turn, then it implies that the current player has lost.
+            {
+                if (CurrentPlayer.IsComputer)
+                {
+                    scoreOfAlgorithm = -1;
+                }
+                else
+                {
+                    scoreOfAlgorithm = 1;
+                }
             }
+            else if (!Board.IsBoardFull())
+            {
+                switchPlayer();
+                scoreOfAlgorithm = NextMove(out int row, out int col, i_Depth + 1);
+                switchPlayer();
+            }
+
+            return scoreOfAlgorithm;
         }
-        public void NextMove(out int o_Row, out int o_Col)
+        public int NextMove(out int io_Row, out int io_Col, int i_Depth)
         {
-            int bestScore = -1; // ???
-            o_Row = 0;
-            o_Col = 0;
+            int bestScore;
+            if (CurrentPlayer.IsComputer)
+            {
+                bestScore = Int32.MinValue;
+            }
+            else
+            {
+                bestScore = Int32.MaxValue;
+            }
+        
+            io_Col = 0;
+            io_Row = 0;
 
             for (int i = 0; i < Board.BoardSize; i++)
             {
                 for (int j = 0; j < Board.BoardSize; j++)
                 {
-                    // change its to Board.isCellEmpty(Board[i, j]) !!!!!!!!!!!!
-                    if (!isCellOnBoardNotEmpty(i + 1, j + 1))
+                    if (Board.IsCellOnBoardEmpty(i, j))
                     {
                         Board.SetCellSymbol(i, j, CurrentPlayer.Symbol);
-                        int scoreOfAlgorithm = MinimaxAlgorithm(Board, 0, true);
-                        Board.SetCellSymbol(i, j, Empty);
-                        if (scoreOfAlgorithm > bestScore)
+                        int scoreOfAlgorithm = MinimaxAlgorithm(i_Depth);
+                        Board.CleanCell(i, j);
+                        if((CurrentPlayer.IsComputer && scoreOfAlgorithm > bestScore) ||
+                            (!CurrentPlayer.IsComputer && scoreOfAlgorithm < bestScore))
                         {
                             bestScore = scoreOfAlgorithm;
                             // bestMove
-                            o_Row = i;
-                            o_Col = j;
+                            if(i_Depth == 0)
+                            {
+                                io_Row = i;
+                                io_Col = j;
+                            }
+                           
                         }
                     }
                 }
             }
-            Board.SetCellSymbol(o_Row, o_Col, CurrentPlayer.Symbol);
+
+            return bestScore;
         }
 
         private void switchPlayer()
@@ -119,21 +155,33 @@ namespace game
             CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
         }
 
-        public void CheckForWinner()
+        public void CheckGameStatusAndUpdate()
         {
-            if (checkRowsForWinner() || checkColumnsForWinner() || checkDiagonalsForWinner())
+            if (CheckForWinner())
             {
                 IsRoundOver = true;
                 switchPlayer();
                 Winner = CurrentPlayer;
                 Winner.Score++;
             }
-            else if (checkForTie())
+            else if (Board.IsBoardFull())
             {
                 IsRoundOver = true;
-                Winner = null;
             }
         }
+
+        public bool CheckForWinner()
+        {
+            bool isThereWinner = false;
+
+            if (checkRowsForWinner() || checkColumnsForWinner() || checkDiagonalsForWinner())
+            {
+                isThereWinner = true;
+            }
+
+            return isThereWinner;
+        }
+
 
         private bool checkRowsForWinner()
         {
@@ -208,11 +256,6 @@ namespace game
             return isLosingDiagonal1 || isLosingDiagonal2;
         }
 
-        private bool checkForTie()
-        {
-            return Board.IsBoardFull();
-        }
-
         public void SetGameForNewRound()
         {
             if (NumOfRounds++ != k_FirstRound)
@@ -232,9 +275,6 @@ namespace game
             UpdatePointsAfterPlayerForfeits();
         }
 
-        public bool IsCellOnBoardNotEmpty(int i_Row, int i_Col)
-        {
-            return Board.GetCellSymbol(i_Row - 1, i_Col - 1) != k_Empty;
-        }
+
     }
 }

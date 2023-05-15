@@ -48,7 +48,7 @@
         {
             if (m_GameCore.CurrentPlayer.IsComputer)
             {
-                m_GameCore.PlayComputerTurn();
+                m_GameCore.ApplyComputerPlayerTurn();
             }
             else
             {
@@ -68,7 +68,7 @@
                 {
                     m_GameCore.PrepareGameForQuitting();
                 }
-                else if (m_GameCore.IsCellOnBoardNotEmpty(row, col))
+                else if (!m_GameCore.Board.IsCellOnBoardEmpty(row - 1, col - 1))
                 {
                     m_UserInterface.DisplayCellIsOccupiedMsg();
                 }

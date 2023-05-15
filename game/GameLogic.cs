@@ -91,8 +91,9 @@ namespace game
         private int minimaxAlgorithm(int i_Depth)
         {
             int scoreOfAlgorithm = 0;
+            bool didCurrentPlayerLose = checkForWinner();
 
-            if (checkForWinner()) // if there is a winner while its current player's turn, then it implies that the current player has lost.
+            if (didCurrentPlayerLose)
             {
                 if (CurrentPlayer.IsComputer)
                 {
